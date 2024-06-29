@@ -1,0 +1,182 @@
+// Example Spring Security configuration
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .authorizeRequests()
+                .antMatchers("/register", "/login").permitAll()
+                .anyRequest().authenticated()
+                .and()
+            .formLogin()
+                .loginPage("/login")
+                .permitAll()
+                .and()
+            .logout()
+                .logoutSuccessUrl("/login?logout")
+                .permitAll();
+    }
+}
+public class ResumeTemplate {
+    private String name;
+    private String description;
+    private List<String> sections;
+    // Getters and setters
+}
+@RestController
+@RequestMapping("/api/resume")
+public class ResumeController {
+
+    @Autowired
+    private ResumeService resumeService;
+
+    @PostMapping("/updateSection")
+    public ResponseEntity<?> updateSection(@RequestBody Section section) {
+        resumeService.updateSection(section);
+        return ResponseEntity.ok().build();
+    }
+    // Other CRUD operations
+}
+public class ResumeExporter {
+
+    public byte[] exportToPDF(Resume resume) throws IOException {
+        // Use PDFBox to generate PDF from resume data
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage();
+        document.addPage(page);
+        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+        // Write resume content to PDF
+        document.save("resume.pdf");
+        document.close();
+        return Files.readAllBytes(Paths.get("resume.pdf"));
+    }
+
+    public byte[] exportToWord(Resume resume) throws IOException {
+        // Use Apache POI to generate Word document from resume data
+        XWPFDocument document = new XWPFDocument();
+        // Create Word document content
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        document.write(outputStream);
+        return outputStream.toByteArray();
+    }
+}
+@Entity
+public class Resume {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String userId;
+    private String name;
+    private String education;
+    private String workExperience;
+    // Other fields and getters/setters
+}"
+Main.java
+package com.company;
+public class Main {
+public static void main(String[] args) {
+new CV();
+}
+}
+CV.java
+package com.company;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
+public class CV {
+private JPanel cvPanel;
+private JTextField name;
+private JTextField address;
+private JTextField contact;
+private JTextField email;
+private JTextField skills1;
+private JTextField skills2;
+private JTextField skills3;
+private JTextField skills4;
+private JComboBox work;
+private JTextField college;
+private JTextField qualiA;
+private JButton SELECTIMAGEButton;
+private JLabel img;
+private JButton GENERATERESUMEButton;
+private JTextField qualiB;
+private JTextField location;
+JFrame frame = new JFrame();
+public CV() {
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setContentPane(cvPanel);
+frame.pack();
+frame.setLocationRelativeTo(null);
+frame.setVisible(true);
+SELECTIMAGEButton.addActionListener(new ActionListener() {
+@Override
+public void actionPerformed(ActionEvent e) {
+JFileChooser fileChooser = new JFileChooser();
+FileNameExtensionFilter filter = new FileNameExtensionFilter("*.IMAGE","jpg","png");
+fileChooser.addChoosableFileFilter(filter);
+int rs = fileChooser.showSaveDialog(null);
+if(rs==JFileChooser.APPROVE_OPTION){
+File selectedImage = fileChooser.getSelectedFile();
+location.setText(selectedImage.getAbsolutePath());
+img.setIcon(resize(location.getText()));
+}
+}
+});
+GENERATERESUMEButton.addActionListener(new ActionListener() {
+@Override
+public void actionPerformed(ActionEvent e) {
+if(name.getText()==null||contact.getText()==null||address.getText()==null||email.getText()==null){
+JOptionPane.showMessageDialog(null,"PLEASE ENTER ALL DETAILS TO GENERATE CV");
+}else{
+try {
+String nameOfFile = "D:\\PDFYAHA\\my.pdf";
+Document myDocument = new Document();
+PdfWriter.getInstance(myDocument, new FileOutputStream(nameOfFile));
+myDocument.open();
+com.itextpdf.text.Image img = com.itextpdf.text.Image.getInstance(location.getText());
+img.setAbsolutePosition(473f, 750f);
+img.scaleAbsolute(80f,70f);
+PdfPTable table = new PdfPTable(2);
+myDocument.add(img);
+myDocument.add(new Paragraph(name.getText(),FontFactory.getFont(FontFactory.TIMES_BOLD,32, com.itextpdf.text.Font.BOLD,BaseColor.DARK_GRAY )));
+myDocument.add(new Paragraph("",FontFactory.getFont(FontFactory.TIMES_BOLD,9,BaseColor.DARK_GRAY)));
+myDocument.add(new Paragraph("",FontFactory.getFont(FontFactory.TIMES_BOLD,9, BaseColor.DARK_GRAY)));
+myDocument.add(new Paragraph("----------------------------------------------------------------------------------------------------------------------------------"));
+myDocument.add(new Paragraph("CONTACT DETAILS",FontFactory.getFont(FontFactory.TIMES_BOLD,9, com.itextpdf.text.Font.BOLD,BaseColor.DARK_GRAY )));
+myDocument.add(new Paragraph(email.getText(),FontFactory.getFont(FontFactory.TIMES_BOLD,7,BaseColor.DARK_GRAY )));
+myDocument.add(new Paragraph(contact.getText(),FontFactory.getFont(FontFactory.TIMES_BOLD,7,BaseColor.DARK_GRAY )));
+myDocument.add(new Paragraph(address.getText(),FontFactory.getFont(FontFactory.TIMES_BOLD,7, BaseColor.DARK_GRAY )));
+myDocument.add(new Paragraph("----------------------------------------------------------------------------------------------------------------------------------"));
+myDocument.add(new Paragraph("SKILLS",FontFactory.getFont(FontFactory.TIMES_BOLD,9, com.itextpdf.text.Font.BOLD,BaseColor.DARK_GRAY )));
+table.setHeaderRows(1);
+table.addCell(skills1.getText());
+table.addCell(skills2.getText());
+table.addCell(skills3.getText());
+table.addCell(skills4.getText());
+myDocument.add(table);
+myDocument.add(new Paragraph("-----------------------------------------------------------------------------------------
